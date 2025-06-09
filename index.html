@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stanje robe</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #ccc;
+    }
+    .hidden {
+      display: none;
+    }
+    .logout-btn {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="login-form">
+    <h2>Prijava</h2>
+    <input type="text" id="username" placeholder="Korisničko ime" />
+    <input type="password" id="password" placeholder="Lozinka" />
+    <button onclick="login()">Uđi</button>
+    <p id="login-error" style="color:red; display:none;">Pogrešno korisničko ime ili lozinka.</p>
+  </div>
+
+  <div class="container hidden" id="app">
+    <h1>Stanje robe</h1>
+    <ul id="lista"></ul>
+    <h2>Dodaj artikal</h2>
+    <input type="text" id="naziv" placeholder="Naziv artikla" />
+    <input type="number" id="kolicina" placeholder="Količina" />
+    <button onclick="dodajArtikal()">Dodaj</button>
+    <button class="logout-btn" onclick="logout()">Izloguj se</button>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQzrYB_Nn1slM20I0KgfahM2wJ1c5bDq4",
+      authDomain: "stanje-robe.firebaseapp.com",
+      databaseURL: "https://stanje-robe-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "stanje-robe"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+  <script>
+    let validUsername = localStorage.getItem("user") || "admin";
+    let validPassword = localStorage.getItem("pass") || "1234";
+
+    if (localStorage.getItem("loggedIn") === "true") {
+      document.getElementById("login-form").style.display = "none";
+      document.getElementById("app").classList.remove("hidden");
+    }
+
+    function login() {
+      const u = document.getElementById("username").value;
+      const p = document.getElementById("password").value;
+      if (u === validUsername && p === validPassword) {
+        localStorage.setItem("loggedIn", "true");
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("app").classList.remove("hidden");
+      } else {
+        document.getElementById("login-error").style.display = "block";
+      }
+    }
+
+    function logout() {
+      localStorage.setItem("loggedIn", "false");
+      location.reload();
+    }
+
+    function prikaziArtikle(snapshot) {
+      const lista = document.getElementById("lista");
+      lista.innerHTML = "";
+      snapshot.forEach((child) => {
+        const item = child.val();
+        lista.innerHTML += `<li>${item.naziv} <span>${item.kolicina}x</span></li>`;
+      });
+    }
+
+    function dodajArtikal() {
+      const naziv = document.getElementById("naziv").value.trim();
+      const kolicina = parseInt(document.getElementById("kolicina").value);
+      if (naziv && kolicina > 0) {
+        const novi = db.ref("artikli").push();
+        novi.set({ naziv, kolicina });
+        document.getElementById("naziv").value = "";
+        document.getElementById("kolicina").value = "";
+      }
+    }
+
+    db.ref("artikli").on("value", prikaziArtikle);
+  </script>
+</body>
+</html>
