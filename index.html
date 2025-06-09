@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stanje robe</title>
+  <style>
+    body { font-family: sans-serif; background: #f9f9f9; padding: 20px; }
+    .container { max-width: 700px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h1, h2 { text-align: center; }
+    input, button { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #ddd; }
+    .actions button { margin-left: 5px; }
+    .hidden { display: none; }
+    .logout-btn { background: #c62828; color: white; border: none; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container" id="login">
+    <h2>Prijava</h2>
+    <input type="text" id="username" placeholder="Korisničko ime" />
+    <input type="password" id="password" placeholder="Lozinka" />
+    <button onclick="login()">Uđi</button>
+    <p id="login-error" style="color:red; display:none;">Pogrešan unos</p>
+  </div>
+
+  <div class="container hidden" id="app">
+    <h1>Stanje robe</h1>
+    <input type="text" id="search" placeholder="Pretraži artikle..." oninput="filtriraj()" />
+    <ul id="lista"></ul>
+
+    <h2>Dodaj / Izmeni artikal</h2>
+    <input type="text" id="naziv" placeholder="Naziv artikla" />
+    <input type="number" id="kolicina" placeholder="Količina" />
+    <button onclick="sacuvajArtikal()">Sačuvaj</button>
+
+    <h2>Izmeni pristup</h2>
+    <input type="text" id="newUser" placeholder="Novi username" />
+    <input type="password" id="newPass" placeholder="Nova lozinka" />
+    <button onclick="promeniPristup()">Promeni</button>
+    <p id="save-msg" style="color:green; display:none;">Izmenjeno!</p>
+
+    <button class="logout-btn" onclick="logout()">Izloguj se</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQzrYB_Nn1slM20I0KgfahM2wJ1c5bDq4",
+      authDomain: "stanje-robe.firebaseapp.com",
+      databaseURL: "https://stanje-robe-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "stanje-robe"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let editKey = null;
+
+    const user = localStorage.getItem("user") || "admin";
+    const pass = localStorage.getItem("pass") || "1234";
+    if (localStorage.getItem("loggedIn") === "true") showApp();
+
+    function login() {
+      const u = document.getElementById("username").value;
+      const p = document.getElementById("password").value;
+      if (u === user && p === pass) {
+        localStorage.setItem("loggedIn", "true");
+        showApp();
+      } else {
+        document.getElementById("login-error").style.display = "block";
+      }
+    }
+
+    function logout() {
+      localStorage.setItem("loggedIn", "false");
+      location.reload();
+    }
+
+    function showApp() {
+      document.getElementById("login").classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
+    }
+
+    function sacuvajArtikal() {
+      const naziv = document.getElementById("naziv").value.trim();
+      const kolicina = parseInt(document.getElementById("kolicina").value);
+      if (!naziv || !kolicina) return;
+      if (editKey) {
+        db.ref("artikli/" + editKey).set({ naziv, kolicina });
+        editKey = null;
+      } else {
+        db.ref("artikli").push({ naziv, kolicina });
+      }
+      document.getElementById("naziv").value = "";
+      document.getElementById("kolicina").value = "";
+    }
+
+    function prikazi(snapshot) {
+      const lista = document.getElementById("lista");
+      lista.innerHTML = "";
+      snapshot.forEach((child) => {
+        const key = child.key;
+        const item = child.val();
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${item.naziv} (${item.kolicina}x)</span>
+          <span class="actions">
+            <button onclick="urediArtikal('${key}', '${item.naziv}', ${item.kolicina})">✏️</button>
+            <button onclick="obrisiArtikal('${key}')">🗑️</button>
+          </span>`;
+        li.dataset.naziv = item.naziv.toLowerCase();
+        lista.appendChild(li);
+      });
+    }
+
+    function urediArtikal(key, naziv, kolicina) {
+      document.getElementById("naziv").value = naziv;
+      document.getElementById("kolicina").value = kolicina;
+      editKey = key;
+    }
+
+    function obrisiArtikal(key) {
+      db.ref("artikli/" + key).remove();
+    }
+
+    function filtriraj() {
+      const q = document.getElementById("search").value.toLowerCase();
+      document.querySelectorAll("#lista li").forEach(li => {
+        li.style.display = li.dataset.naziv.includes(q) ? "" : "none";
+      });
+    }
+
+    function promeniPristup() {
+      const u = document.getElementById("newUser").value.trim();
+      const p = document.getElementById("newPass").value.trim();
+      if (u && p) {
+        localStorage.setItem("user", u);
+        localStorage.setItem("pass", p);
+        document.getElementById("save-msg").style.display = "block";
+        setTimeout(() => document.getElementById("save-msg").style.display = "none", 3000);
+      }
+    }
+
+    db.ref("artikli").on("value", prikazi);
+  </script>
+</body>
+</html>
