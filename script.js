@@ -7,6 +7,11 @@ window.onload = function () {
   }
 };
 
+// Korisnički podaci
+let korisnickoIme = "admin";
+let lozinka = "1234";
+
+// Prijava korisnika
 function login() {
   const un = document.getElementById("username").value;
   const pw = document.getElementById("password").value;
@@ -20,29 +25,13 @@ function login() {
   }
 }
 
+// Odjava korisnika
 function logout() {
   localStorage.removeItem("ulogovan");
   location.reload();
 }
-let korisnickoIme = "admin";
-let lozinka = "1234";
 
-function login() {
-  const un = document.getElementById("username").value;
-  const pw = document.getElementById("password").value;
-  if (un === korisnickoIme && pw === lozinka) {
-    document.getElementById("login-section").style.display = "none";
-    document.getElementById("main-section").style.display = "block";
-    prikaziKlijente();
-  } else {
-    alert("Pogrešno korisničko ime ili lozinka");
-  }
-}
-
-function logout() {
-  location.reload();
-}
-
+// Promena lozinke
 function promeniLozinku() {
   const novaLozinka = prompt("Unesi novu lozinku:");
   if (novaLozinka) {
@@ -51,11 +40,13 @@ function promeniLozinku() {
   }
 }
 
+// Prikaz odgovarajuće sekcije
 function showSection(id) {
   document.querySelectorAll(".section").forEach(sec => sec.style.display = "none");
   document.getElementById(id).style.display = "block";
 }
 
+// Artikli
 function dodajArtikal() {
   const artikal = document.getElementById("novi-artikal").value;
   if (artikal) {
@@ -67,6 +58,7 @@ function dodajArtikal() {
   }
 }
 
+// Prijem uređaja
 function dodajUredjaj() {
   const uredjaj = document.getElementById("novi-uredjaj").value;
   if (uredjaj) {
@@ -78,10 +70,12 @@ function dodajUredjaj() {
   }
 }
 
+// Generisanje nasumičnog broja reversa
 function generisiRevers() {
   return "REV-" + Math.floor(100000 + Math.random() * 900000);
 }
 
+// Dodavanje klijenta
 function dodajKlijentaDetaljno() {
   const klijent = {
     ime: document.getElementById("imePrezime").value,
@@ -102,6 +96,7 @@ function dodajKlijentaDetaljno() {
   obrisiFormu();
 }
 
+// Prikaz klijenata
 function prikaziKlijente() {
   const tbody = document.querySelector("#lista-klijenata tbody");
   tbody.innerHTML = "";
@@ -123,6 +118,7 @@ function prikaziKlijente() {
   });
 }
 
+// Brisanje forme
 function obrisiFormu() {
   document.getElementById("imePrezime").value = "";
   document.getElementById("telefon").value = "";
