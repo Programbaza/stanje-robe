@@ -1,80 +1,107 @@
-let loggedIn = false;
+let korisnickoIme = "admin";
 let lozinka = "1234";
-let korisnik = "admin";
 
 function login() {
-  const u = document.getElementById('username').value;
-  const p = document.getElementById('password').value;
-  if (u === korisnik && p === lozinka) {
-    loggedIn = true;
-    document.getElementById('login-section').style.display = 'none';
-    document.getElementById('main-section').style.display = 'block';
-    showSection('artikli');
+  const un = document.getElementById("username").value;
+  const pw = document.getElementById("password").value;
+  if (un === korisnickoIme && pw === lozinka) {
+    document.getElementById("login-section").style.display = "none";
+    document.getElementById("main-section").style.display = "block";
+    prikaziKlijente();
   } else {
-    alert("Pogrešni podaci");
+    alert("Pogrešno korisničko ime ili lozinka");
   }
 }
 
 function logout() {
-  loggedIn = false;
-  document.getElementById('login-section').style.display = 'block';
-  document.getElementById('main-section').style.display = 'none';
+  location.reload();
 }
 
 function promeniLozinku() {
-  const nova = prompt("Unesi novu lozinku:");
-  if (nova) {
-    lozinka = nova;
-    alert("Lozinka uspešno promenjena.");
+  const novaLozinka = prompt("Unesi novu lozinku:");
+  if (novaLozinka) {
+    lozinka = novaLozinka;
+    alert("Lozinka promenjena.");
   }
 }
 
 function showSection(id) {
-  const sekcije = document.querySelectorAll('.section');
-  sekcije.forEach(sec => sec.style.display = 'none');
-  document.getElementById(id).style.display = 'block';
+  document.querySelectorAll(".section").forEach(sec => sec.style.display = "none");
+  document.getElementById(id).style.display = "block";
 }
 
-// ARTIKLI
 function dodajArtikal() {
-  const naziv = document.getElementById('novi-artikal').value;
-  if (!naziv.trim()) return;
-  const li = document.createElement('li');
-  li.textContent = naziv;
-  document.getElementById('lista-artikala').appendChild(li);
-  document.getElementById('novi-artikal').value = "";
+  const artikal = document.getElementById("novi-artikal").value;
+  if (artikal) {
+    const lista = document.getElementById("lista-artikala");
+    const li = document.createElement("li");
+    li.innerText = artikal;
+    lista.appendChild(li);
+    document.getElementById("novi-artikal").value = "";
+  }
 }
 
-// UREDJAJI
 function dodajUredjaj() {
-  const model = document.getElementById('novi-uredjaj').value;
-  if (!model.trim()) return;
-  const li = document.createElement('li');
-  li.textContent = model;
-  document.getElementById('lista-uredjaja').appendChild(li);
-  document.getElementById('novi-uredjaj').value = "";
+  const uredjaj = document.getElementById("novi-uredjaj").value;
+  if (uredjaj) {
+    const lista = document.getElementById("lista-uredjaja");
+    const li = document.createElement("li");
+    li.innerText = uredjaj;
+    lista.appendChild(li);
+    document.getElementById("novi-uredjaj").value = "";
+  }
 }
 
-// KLIJENTI
-function dodajKlijenta() {
-  const klijent = document.getElementById('novi-klijent').value;
-  if (!klijent.trim()) return;
-  const li = document.createElement('li');
-  li.textContent = klijent;
-  document.getElementById('lista-klijenata').appendChild(li);
-  document.getElementById('novi-klijent').value = "";
+function generisiRevers() {
+  return "REV-" + Math.floor(100000 + Math.random() * 900000);
 }
 
-// PRETRAGA
-function pretraziArtikle() {
-  const query = document.getElementById('pretraga-input').value.toLowerCase();
-  const lista = document.querySelectorAll('#lista-artikala li');
-  const rezultati = document.getElementById('rezultati-pretrage');
-  rezultati.innerHTML = '';
-  lista.forEach(li => {
-    if (li.textContent.toLowerCase().includes(query)) {
-      const klon = li.cloneNode(true);
-      rezultati.appendChild(klon);
-    }
+function dodajKlijentaDetaljno() {
+  const klijent = {
+    ime: document.getElementById("imePrezime").value,
+    telefon: document.getElementById("telefon").value,
+    model: document.getElementById("model").value,
+    opis: document.getElementById("opis").value,
+    imei: document.getElementById("imei").value,
+    revers: generisiRevers(),
+    datum: document.getElementById("datum").value,
+    popravka: document.getElementById("popravka").value,
+  };
+
+  let klijenti = JSON.parse(localStorage.getItem("klijenti")) || [];
+  klijenti.push(klijent);
+  localStorage.setItem("klijenti", JSON.stringify(klijenti));
+
+  prikaziKlijente();
+  obrisiFormu();
+}
+
+function prikaziKlijente() {
+  const tbody = document.querySelector("#lista-klijenata tbody");
+  tbody.innerHTML = "";
+
+  const klijenti = JSON.parse(localStorage.getItem("klijenti")) || [];
+  klijenti.forEach(k => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${k.ime}</td>
+      <td>${k.telefon}</td>
+      <td>${k.model}</td>
+      <td>${k.opis}</td>
+      <td>${k.imei}</td>
+      <td>${k.revers}</td>
+      <td>${k.datum}</td>
+      <td>${k.popravka}</td>
+    `;
+    tbody.appendChild(tr);
   });
+}
+
+function obrisiFormu() {
+  document.getElementById("imePrezime").value = "";
+  document.getElementById("telefon").value = "";
+  document.getElementById("model").value = "";
+  document.getElementById("opis").value = "";
+  document.getElementById("imei").value = "";
+  document.getElementById("datum").value = "";
 }
