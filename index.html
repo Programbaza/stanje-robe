@@ -44,9 +44,39 @@
 
     <div id="klijenti" class="section" style="display: none;">
       <h2>👤 Klijenti</h2>
-      <input type="text" id="novi-klijent" placeholder="Ime i broj" />
-      <button onclick="dodajKlijenta()">Dodaj klijenta</button>
-      <ul id="lista-klijenata"></ul>
+      <div class="form-klijent">
+        <input type="text" id="imePrezime" placeholder="Ime i prezime" />
+        <input type="text" id="telefon" placeholder="Broj telefona" />
+        <input type="text" id="model" placeholder="Model telefona" />
+        <input type="text" id="opis" placeholder="Opis kvara" />
+        <input type="text" id="imei" placeholder="IMEI broj" />
+        <input type="text" id="revers" placeholder="Broj reversa (automatski)" disabled />
+        <input type="date" id="datum" placeholder="Datum prijema" />
+        <select id="popravka">
+          <option value="ekran">Ekran</option>
+          <option value="baterija">Baterija</option>
+          <option value="poklopac">Poklopac</option>
+          <option value="dugme">Dugme</option>
+          <option value="softver">Softver</option>
+          <option value="drugo">Drugo</option>
+        </select>
+        <button onclick="dodajKlijentaDetaljno()">+ Sačuvaj klijenta</button>
+      </div>
+      <table id="lista-klijenata">
+        <thead>
+          <tr>
+            <th>Ime</th>
+            <th>Telefon</th>
+            <th>Model</th>
+            <th>Opis</th>
+            <th>IMEI</th>
+            <th>Revers</th>
+            <th>Datum</th>
+            <th>Popravka</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
 
     <div id="pretraga" class="section" style="display: none;">
