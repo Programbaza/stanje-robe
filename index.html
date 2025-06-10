@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <title>POS - Stanje Robe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>POS Sistem</h1>
+  <div id="login-section">
+    <input type="text" placeholder="Korisničko ime" id="username" />
+    <input type="password" placeholder="Lozinka" id="password" />
+    <button onclick="login()">Prijavi se</button>
+  </div>
+  <div id="main-section" style="display:none;">
+    <h2>Artikli</h2>
+    <button onclick="dodajArtikal()">+ Dodaj artikal</button>
+    <div id="artikli"></div>
+    <button onclick="generisiPDF()">📄 Revers</button>
+    <button onclick="promeniLozinku()">🔑 Promeni lozinku</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
