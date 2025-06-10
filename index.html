@@ -2,24 +2,75 @@
 <html lang="sr">
 <head>
   <meta charset="UTF-8" />
-  <title>POS - Stanje Robe</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS Sistem Servis</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>POS Sistem</h1>
+  <h1>📱 POS Sistem – Servis Telefona</h1>
+
   <div id="login-section">
-    <input type="text" placeholder="Korisničko ime" id="username" />
-    <input type="password" placeholder="Lozinka" id="password" />
+    <input type="text" id="username" placeholder="Korisničko ime" />
+    <input type="password" id="password" placeholder="Lozinka" />
     <button onclick="login()">Prijavi se</button>
   </div>
-  <div id="main-section" style="display:none;">
-    <h2>Artikli</h2>
-    <button onclick="dodajArtikal()">+ Dodaj artikal</button>
-    <div id="artikli"></div>
-    <button onclick="generisiPDF()">📄 Revers</button>
-    <button onclick="promeniLozinku()">🔑 Promeni lozinku</button>
+
+  <div id="main-section" style="display: none;">
+    <div class="nav">
+      <button onclick="showSection('artikli')">📦 Artikli</button>
+      <button onclick="showSection('uredjaji')">🔧 Uređaji</button>
+      <button onclick="showSection('klijenti')">👤 Klijenti</button>
+      <button onclick="showSection('pretraga')">🔍 Pretraga</button>
+      <button onclick="showSection('magacin')">🏬 Magacin</button>
+      <button onclick="showSection('statistika')">📊 Statistika</button>
+      <button onclick="showSection('rezervacije')">📅 Rezervacije</button>
+      <button onclick="promeniLozinku()">🔐 Promeni lozinku</button>
+      <button onclick="logout()">🚪 Izloguj se</button>
+    </div>
+
+    <div id="artikli" class="section">
+      <h2>📦 Artikli</h2>
+      <input type="text" id="novi-artikal" placeholder="Naziv artikla" />
+      <button onclick="dodajArtikal()">Dodaj artikal</button>
+      <ul id="lista-artikala"></ul>
+    </div>
+
+    <div id="uredjaji" class="section" style="display: none;">
+      <h2>🔧 Prijem uređaja</h2>
+      <input type="text" id="novi-uredjaj" placeholder="Model i kvar" />
+      <button onclick="dodajUredjaj()">Dodaj uređaj</button>
+      <ul id="lista-uredjaja"></ul>
+    </div>
+
+    <div id="klijenti" class="section" style="display: none;">
+      <h2>👤 Klijenti</h2>
+      <input type="text" id="novi-klijent" placeholder="Ime i broj" />
+      <button onclick="dodajKlijenta()">Dodaj klijenta</button>
+      <ul id="lista-klijenata"></ul>
+    </div>
+
+    <div id="pretraga" class="section" style="display: none;">
+      <h2>🔍 Pretraga artikala</h2>
+      <input type="text" id="pretraga-input" placeholder="Unesi naziv..." onkeyup="pretraziArtikle()" />
+      <ul id="rezultati-pretrage"></ul>
+    </div>
+
+    <div id="magacin" class="section" style="display: none;">
+      <h2>🏬 Magacin</h2>
+      <p>Prikaz zaliha (uskoro)</p>
+    </div>
+
+    <div id="statistika" class="section" style="display: none;">
+      <h2>📊 Statistika</h2>
+      <p>Izveštaji i grafici (uskoro)</p>
+    </div>
+
+    <div id="rezervacije" class="section" style="display: none;">
+      <h2>📅 Rezervacije</h2>
+      <p>Pregled zakazanih servisa (uskoro)</p>
+    </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
