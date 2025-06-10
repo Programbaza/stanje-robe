@@ -1,3 +1,29 @@
+// Provera da li je korisnik već ulogovan
+window.onload = function () {
+  if (localStorage.getItem("ulogovan") === "da") {
+    document.getElementById("login-section").style.display = "none";
+    document.getElementById("main-section").style.display = "block";
+    prikaziKlijente();
+  }
+};
+
+function login() {
+  const un = document.getElementById("username").value;
+  const pw = document.getElementById("password").value;
+  if (un === korisnickoIme && pw === lozinka) {
+    localStorage.setItem("ulogovan", "da");
+    document.getElementById("login-section").style.display = "none";
+    document.getElementById("main-section").style.display = "block";
+    prikaziKlijente();
+  } else {
+    alert("Pogrešno korisničko ime ili lozinka");
+  }
+}
+
+function logout() {
+  localStorage.removeItem("ulogovan");
+  location.reload();
+}
 let korisnickoIme = "admin";
 let lozinka = "1234";
 
