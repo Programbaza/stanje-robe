@@ -1,17 +1,5 @@
-// Firebase setup bez import modula za GitHub Pages
-
-// Ubacujemo Firebase SDK globalno
-// Ovaj kod treba koristiti sa odgovarajućim <script> tagovima u index.html
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAQzrYB_Nn1slM20I0KgfahM2wJ1c5bDq4",
-  authDomain: "stanje-robe.firebaseapp.com",
-  projectId: "stanje-robe",
-  appId: "1:685133583956:web:c1b1c4b4cf5b765b86bfc1"
-};
-
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+// Firebase setup i funkcije (v10 kompatibilno za GitHub Pages)
+import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 let korisnickoIme = "admin";
 let lozinka = "1234";
@@ -24,7 +12,7 @@ window.onload = function () {
   }
 };
 
-function login() {
+window.login = function () {
   const un = document.getElementById("username").value;
   const pw = document.getElementById("password").value;
   if (un === korisnickoIme && pw === lozinka) {
@@ -35,22 +23,22 @@ function login() {
   } else {
     alert("Pogrešno korisničko ime ili lozinka");
   }
-}
+};
 
-function logout() {
+window.logout = function () {
   localStorage.removeItem("ulogovan");
   location.reload();
-}
+};
 
-function promeniLozinku() {
+window.promeniLozinku = function () {
   const novaLozinka = prompt("Unesi novu lozinku:");
   if (novaLozinka) {
     lozinka = novaLozinka;
     alert("Lozinka promenjena.");
   }
-}
+};
 
-function dodajArtikal() {
+window.dodajArtikal = function () {
   const artikal = document.getElementById("novi-artikal").value;
   if (artikal) {
     const lista = document.getElementById("lista-artikala");
@@ -59,9 +47,9 @@ function dodajArtikal() {
     lista.appendChild(li);
     document.getElementById("novi-artikal").value = "";
   }
-}
+};
 
-function dodajUredjaj() {
+window.dodajUredjaj = function () {
   const uredjaj = document.getElementById("novi-uredjaj").value;
   if (uredjaj) {
     const lista = document.getElementById("lista-uredjaja");
@@ -70,13 +58,13 @@ function dodajUredjaj() {
     lista.appendChild(li);
     document.getElementById("novi-uredjaj").value = "";
   }
-}
+};
 
 function generisiRevers() {
   return "REV-" + Math.floor(100000 + Math.random() * 900000);
 }
 
-function dodajKlijentaDetaljno() {
+window.dodajKlijentaDetaljno = async function () {
   const klijent = {
     ime: document.getElementById("imePrezime").value,
     telefon: document.getElementById("telefon").value,
@@ -88,19 +76,18 @@ function dodajKlijentaDetaljno() {
     popravka: document.getElementById("popravka").value,
   };
 
-  db.collection("klijenti").add(klijent)
-    .then(() => {
-      alert("Klijent sačuvan!");
-      obrisiFormu();
-    })
-    .catch((error) => {
-      console.error("Greška pri upisu:", error);
-    });
-}
+  try {
+    await addDoc(collection(window.db, "klijenti"), klijent);
+    alert("Klijent sačuvan!");
+    obrisiFormu();
+  } catch (error) {
+    console.error("Greška pri upisu:", error);
+  }
+};
 
-function prikaziKlijente() {
+window.prikaziKlijente = function () {
   const tbody = document.querySelector("#lista-klijenata tbody");
-  db.collection("klijenti").onSnapshot((snapshot) => {
+  onSnapshot(collection(window.db, "klijenti"), (snapshot) => {
     tbody.innerHTML = "";
     snapshot.forEach((doc) => {
       const k = doc.data();
@@ -118,7 +105,7 @@ function prikaziKlijente() {
       tbody.appendChild(tr);
     });
   });
-}
+};
 
 function obrisiFormu() {
   document.getElementById("imePrezime").value = "";
@@ -127,4 +114,5 @@ function obrisiFormu() {
   document.getElementById("opis").value = "";
   document.getElementById("imei").value = "";
   document.getElementById("datum").value = "";
+  document.getElementById("popravka").value = "";
 }
