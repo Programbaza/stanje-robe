@@ -1,6 +1,7 @@
-// Firebase setup i import modula
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// Firebase setup bez import modula za GitHub Pages
+
+// Ubacujemo Firebase SDK globalno
+// Ovaj kod treba koristiti sa odgovarajućim <script> tagovima u index.html
 
 const firebaseConfig = {
   apiKey: "AIzaSyAQzrYB_Nn1slM20I0KgfahM2wJ1c5bDq4",
@@ -9,8 +10,8 @@ const firebaseConfig = {
   appId: "1:685133583956:web:c1b1c4b4cf5b765b86bfc1"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 let korisnickoIme = "admin";
 let lozinka = "1234";
@@ -42,12 +43,10 @@ function logout() {
 }
 
 function promeniLozinku() {
-  const noviUsername = prompt("Unesi novo korisničko ime:");
   const novaLozinka = prompt("Unesi novu lozinku:");
-  if (noviUsername && novaLozinka) {
-    korisnickoIme = noviUsername;
+  if (novaLozinka) {
     lozinka = novaLozinka;
-    alert("Podaci su ažurirani.");
+    alert("Lozinka promenjena.");
   }
 }
 
@@ -77,7 +76,7 @@ function generisiRevers() {
   return "REV-" + Math.floor(100000 + Math.random() * 900000);
 }
 
-async function dodajKlijentaDetaljno() {
+function dodajKlijentaDetaljno() {
   const klijent = {
     ime: document.getElementById("imePrezime").value,
     telefon: document.getElementById("telefon").value,
@@ -89,20 +88,21 @@ async function dodajKlijentaDetaljno() {
     popravka: document.getElementById("popravka").value,
   };
 
-  try {
-    await addDoc(collection(db, "klijenti"), klijent);
-    alert("Klijent sačuvan!");
-    obrisiFormu();
-  } catch (e) {
-    console.error("Greška pri upisu:", e);
-  }
+  db.collection("klijenti").add(klijent)
+    .then(() => {
+      alert("Klijent sačuvan!");
+      obrisiFormu();
+    })
+    .catch((error) => {
+      console.error("Greška pri upisu:", error);
+    });
 }
 
 function prikaziKlijente() {
   const tbody = document.querySelector("#lista-klijenata tbody");
-  onSnapshot(collection(db, "klijenti"), (snapshot) => {
+  db.collection("klijenti").onSnapshot((snapshot) => {
     tbody.innerHTML = "";
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       const k = doc.data();
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -127,5 +127,4 @@ function obrisiFormu() {
   document.getElementById("opis").value = "";
   document.getElementById("imei").value = "";
   document.getElementById("datum").value = "";
-  document.getElementById("popravka").value = "";
 }
