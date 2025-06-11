@@ -31,10 +31,12 @@ window.logout = function () {
 };
 
 window.promeniLozinku = function () {
+  const novoIme = prompt("Unesi novo korisničko ime:");
   const novaLozinka = prompt("Unesi novu lozinku:");
-  if (novaLozinka) {
+  if (novoIme && novaLozinka) {
+    korisnickoIme = novoIme;
     lozinka = novaLozinka;
-    alert("Lozinka promenjena.");
+    alert("Korisničko ime i lozinka promenjeni.");
   }
 };
 
