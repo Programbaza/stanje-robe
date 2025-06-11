@@ -1,4 +1,20 @@
-// Provera da li je korisnik već ulogovan
+// Firebase setup i import modula
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAQzrYB_Nn1slM20I0KgfahM2wJ1c5bDq4",
+  authDomain: "stanje-robe.firebaseapp.com",
+  projectId: "stanje-robe",
+  appId: "1:685133583956:web:c1b1c4b4cf5b765b86bfc1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let korisnickoIme = "admin";
+let lozinka = "1234";
+
 window.onload = function () {
   if (localStorage.getItem("ulogovan") === "da") {
     document.getElementById("login-section").style.display = "none";
@@ -7,11 +23,6 @@ window.onload = function () {
   }
 };
 
-// Korisnički podaci
-let korisnickoIme = "admin";
-let lozinka = "1234";
-
-// Prijava korisnika
 function login() {
   const un = document.getElementById("username").value;
   const pw = document.getElementById("password").value;
@@ -25,13 +36,11 @@ function login() {
   }
 }
 
-// Odjava korisnika
 function logout() {
   localStorage.removeItem("ulogovan");
   location.reload();
 }
 
-// Promena lozinke
 function promeniLozinku() {
   const novaLozinka = prompt("Unesi novu lozinku:");
   if (novaLozinka) {
@@ -40,13 +49,11 @@ function promeniLozinku() {
   }
 }
 
-// Prikaz odgovarajuće sekcije
 function showSection(id) {
   document.querySelectorAll(".section").forEach(sec => sec.style.display = "none");
   document.getElementById(id).style.display = "block";
 }
 
-// Artikli
 function dodajArtikal() {
   const artikal = document.getElementById("novi-artikal").value;
   if (artikal) {
@@ -58,7 +65,6 @@ function dodajArtikal() {
   }
 }
 
-// Prijem uređaja
 function dodajUredjaj() {
   const uredjaj = document.getElementById("novi-uredjaj").value;
   if (uredjaj) {
@@ -70,13 +76,11 @@ function dodajUredjaj() {
   }
 }
 
-// Generisanje nasumičnog broja reversa
 function generisiRevers() {
   return "REV-" + Math.floor(100000 + Math.random() * 900000);
 }
 
-// Dodavanje klijenta
-function dodajKlijentaDetaljno() {
+async function dodajKlijentaDetaljno() {
   const klijent = {
     ime: document.getElementById("imePrezime").value,
     telefon: document.getElementById("telefon").value,
@@ -88,37 +92,37 @@ function dodajKlijentaDetaljno() {
     popravka: document.getElementById("popravka").value,
   };
 
-  let klijenti = JSON.parse(localStorage.getItem("klijenti")) || [];
-  klijenti.push(klijent);
-  localStorage.setItem("klijenti", JSON.stringify(klijenti));
-
-  prikaziKlijente();
-  obrisiFormu();
+  try {
+    await addDoc(collection(db, "klijenti"), klijent);
+    alert("Klijent sačuvan!");
+    obrisiFormu();
+  } catch (e) {
+    console.error("Greška pri upisu:", e);
+  }
 }
 
-// Prikaz klijenata
 function prikaziKlijente() {
   const tbody = document.querySelector("#lista-klijenata tbody");
-  tbody.innerHTML = "";
-
-  const klijenti = JSON.parse(localStorage.getItem("klijenti")) || [];
-  klijenti.forEach(k => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${k.ime}</td>
-      <td>${k.telefon}</td>
-      <td>${k.model}</td>
-      <td>${k.opis}</td>
-      <td>${k.imei}</td>
-      <td>${k.revers}</td>
-      <td>${k.datum}</td>
-      <td>${k.popravka}</td>
-    `;
-    tbody.appendChild(tr);
+  onSnapshot(collection(db, "klijenti"), (snapshot) => {
+    tbody.innerHTML = "";
+    snapshot.forEach(doc => {
+      const k = doc.data();
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${k.ime}</td>
+        <td>${k.telefon}</td>
+        <td>${k.model}</td>
+        <td>${k.opis}</td>
+        <td>${k.imei}</td>
+        <td>${k.revers}</td>
+        <td>${k.datum}</td>
+        <td>${k.popravka}</td>
+      `;
+      tbody.appendChild(tr);
+    });
   });
 }
 
-// Brisanje forme
 function obrisiFormu() {
   document.getElementById("imePrezime").value = "";
   document.getElementById("telefon").value = "";
