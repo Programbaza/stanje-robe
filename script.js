@@ -42,10 +42,12 @@ function logout() {
 }
 
 function promeniLozinku() {
+  const noviUsername = prompt("Unesi novo korisničko ime:");
   const novaLozinka = prompt("Unesi novu lozinku:");
-  if (novaLozinka) {
+  if (noviUsername && novaLozinka) {
+    korisnickoIme = noviUsername;
     lozinka = novaLozinka;
-    alert("Lozinka promenjena.");
+    alert("Podaci su ažurirani.");
   }
 }
 
@@ -125,4 +127,5 @@ function obrisiFormu() {
   document.getElementById("opis").value = "";
   document.getElementById("imei").value = "";
   document.getElementById("datum").value = "";
+  document.getElementById("popravka").value = "";
 }
