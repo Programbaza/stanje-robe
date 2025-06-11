@@ -2,9 +2,10 @@
 <html lang="sr">
 <head>
   <meta charset="UTF-8" />
-  <title>POS Sistem Servis</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS Sistem Servis</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
   <div id="login-section">
@@ -14,43 +15,37 @@
     <button onclick="login()">Prijavi se</button>
   </div>
 
-  <div id="main-section" style="display: none;">
-    <h2>POS Sistem Servis</h2>
+  <div id="main-section" style="display: none">
+    <h2>POS Sistem Servisa</h2>
     <button onclick="logout()">🚪 Izloguj se</button>
     <button onclick="promeniLozinku()">🔑 Promeni lozinku</button>
 
-    <h3>Dodavanje artikala</h3>
+    <h3>Dodaj artikal</h3>
     <input type="text" id="novi-artikal" placeholder="Unesi artikal" />
-    <button onclick="dodajArtikal()">➕ Dodaj artikal</button>
+    <button onclick="dodajArtikal()">➕ Dodaj</button>
     <ul id="lista-artikala"></ul>
 
-    <h3>Dodavanje uređaja</h3>
+    <h3>Dodaj uređaj</h3>
     <input type="text" id="novi-uredjaj" placeholder="Unesi uređaj" />
-    <button onclick="dodajUredjaj()">➕ Dodaj uređaj</button>
+    <button onclick="dodajUredjaj()">➕ Dodaj</button>
     <ul id="lista-uredjaja"></ul>
 
-    <h3>Prijem klijenata</h3>
-    <input type="text" id="imePrezime" placeholder="Ime i prezime" />
-    <input type="text" id="telefon" placeholder="Broj telefona" />
-    <input type="text" id="model" placeholder="Model telefona" />
-    <input type="text" id="opis" placeholder="Opis kvara" />
-    <input type="text" id="imei" placeholder="IMEI" />
-    <input type="date" id="datum" />
-    <input type="text" id="popravka" placeholder="Vrsta popravke (ekran, baterija...)" />
-    <button onclick="dodajKlijentaDetaljno()">📥 Dodaj klijenta</button>
+    <h3>Unos klijenta</h3>
+    <input id="imePrezime" placeholder="Ime i prezime" />
+    <input id="telefon" placeholder="Telefon" />
+    <input id="model" placeholder="Model telefona" />
+    <input id="opis" placeholder="Opis kvara" />
+    <input id="imei" placeholder="IMEI" />
+    <input id="datum" type="date" />
+    <input id="popravka" placeholder="Tip popravke (ekran, baterija...)" />
+    <button onclick="dodajKlijentaDetaljno()">💾 Sačuvaj klijenta</button>
 
     <h3>Lista klijenata</h3>
     <table id="lista-klijenata" border="1">
       <thead>
         <tr>
-          <th>Ime</th>
-          <th>Telefon</th>
-          <th>Model</th>
-          <th>Opis</th>
-          <th>IMEI</th>
-          <th>Revers</th>
-          <th>Datum prijema</th>
-          <th>Popravka</th>
+          <th>Ime</th><th>Telefon</th><th>Model</th><th>Opis</th>
+          <th>IMEI</th><th>Revers</th><th>Datum</th><th>Popravka</th>
         </tr>
       </thead>
       <tbody></tbody>
